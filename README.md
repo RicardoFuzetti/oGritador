@@ -37,10 +37,6 @@ Este projeto é um bot para Discord desenvolvido em Python, utilizando a bibliot
 - `discord.py`
 - `python-dotenv`
 
-### Contribuição
+### Observações
 
-Sinta-se à vontade para contribuir para o projeto! Você pode fazer isso enviando um pull request ou abrindo um issue para sugerir melhorias ou relatar problemas.
-
-### Licença
-
-Este projeto está licenciado sob a [MIT License](LICENSE).
+Necessário ter o FFmpeg instaldo na máquina.

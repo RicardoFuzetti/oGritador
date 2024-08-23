@@ -6,7 +6,7 @@ Este projeto é um bot para Discord desenvolvido em Python, utilizando a bibliot
 
 - **Conexão Automática**: O bot se conecta automaticamente ao canal de voz especificado ao ser iniciado.
 - **Reprodução Imediata**: Toca um arquivo de áudio específico imediatamente após se conectar ao canal de voz.
-- **Reprodução Aleatória**: Reproduz arquivos de áudio aleatórios a cada 1 a 10 segundos enquanto está conectado ao canal de voz.
+- **Reprodução Aleatória**: Reproduz arquivos de áudio aleatórios a cada 40 a 60 minutos enquanto está conectado ao canal de voz.
 - **Comando de Saída**: Permite que o bot se desconecte do canal de voz com o comando `!leave`.
 
 ### Configuração

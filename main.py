@@ -19,6 +19,7 @@ VOICE_CHANNEL_ID = int(os.getenv('VOICE_CHANNEL_ID'))
 AUDIO_FOLDER_PATH = os.getenv('AUDIO_FOLDER_PATH')
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 
+
 def get_random_audio_file(folder_path):
     """Retorna um caminho de arquivo de áudio aleatório dentro da pasta especificada."""
     audio_files = [f for f in os.listdir(folder_path) if f.endswith(('.mp3', '.wav'))]
@@ -26,6 +27,7 @@ def get_random_audio_file(folder_path):
         return os.path.join(folder_path, random.choice(audio_files))
     print(f"Nenhum arquivo de áudio encontrado em {folder_path}")
     return None
+
 
 @bot.event
 async def on_ready():
@@ -42,10 +44,13 @@ async def on_ready():
     else:
         print(f"Guilde com ID {GUILD_ID} não encontrada.")
 
-@tasks.loop(seconds=10)
+
+#@tasks.loop(seconds=1)
+@tasks.loop(minutes=1)
 async def play_audio():
-    # Espera um tempo aleatório entre 1 e 10 segundos
-    await asyncio.sleep(random.randint(1, 10))
+    # Espera um tempo aleatório entre 40min e 60min
+    await asyncio.sleep(random.randint(2400, 3600))
+    #await asyncio.sleep(random.randint(1, 10))
 
     guild = bot.get_guild(GUILD_ID)
     if not guild:
@@ -68,6 +73,7 @@ async def play_audio():
         print(f"Reproduzindo: {audio_file}")
     else:
         print(f"Arquivo de áudio não encontrado ou pasta vazia: {AUDIO_FOLDER_PATH}")
+
 
 @bot.command(name="leave")
 async def leave(ctx):

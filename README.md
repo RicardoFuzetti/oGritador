@@ -1,12 +1,12 @@
 ## oGritador
 
-Este projeto é um bot para Discord desenvolvido em Python, utilizando a biblioteca `discord.py`, que se conecta a um canal de voz específico e reproduz arquivos de áudio em intervalos aleatórios. O bot é configurado para tocar um arquivo de áudio específico assim que se conecta ao canal de voz e, subsequentemente, toca o mesmo arquivo em intervalos aleatórios entre definido pelo DEV.
+Este projeto é um bot para Discord desenvolvido em Python, utilizando a biblioteca `discord.py`. O bot se conecta automaticamente a um canal de voz específico, onde reproduz arquivos de áudio de forma aleatória em intervalos definidos. Assim que se conecta ao canal, o bot toca um arquivo de áudio específico e, em seguida, continua tocando arquivos aleatórios a cada 1 a 10 segundos.
 
 ### Funcionalidades
 
-- **Conexão Automática**: O bot se conecta automaticamente ao canal de voz especificado assim que é iniciado.
-- **Reprodução Imediata**: Toca um arquivo de áudio específico assim que se conecta ao canal de voz.
-- **Reprodução Aleatória**: Reproduz o arquivo de áudio em intervalos aleatórios de tempo enquanto está no canal de voz.
+- **Conexão Automática**: O bot se conecta automaticamente ao canal de voz especificado ao ser iniciado.
+- **Reprodução Imediata**: Toca um arquivo de áudio específico imediatamente após se conectar ao canal de voz.
+- **Reprodução Aleatória**: Reproduz arquivos de áudio aleatórios a cada 1 a 10 segundos enquanto está conectado ao canal de voz.
 - **Comando de Saída**: Permite que o bot se desconecte do canal de voz com o comando `!leave`.
 
 ### Configuração
@@ -23,7 +23,7 @@ Este projeto é um bot para Discord desenvolvido em Python, utilizando a bibliot
     DISCORD_TOKEN=your_discord_token_here
     GUILD_ID=your_server_id
     VOICE_CHANNEL_ID=your_voice_channel_id
-    AUDIO_FILE_PATH=your_file_path.mp3
+    AUDIO_FOLDER_PATH=your_audio_folder_path
     ```
 
 3. **Execução**: Execute o bot com:
@@ -39,4 +39,4 @@ Este projeto é um bot para Discord desenvolvido em Python, utilizando a bibliot
 
 ### Observações
 
-Necessário ter o FFmpeg instaldo na máquina.
+Necessário ter o FFmpeg instalado na máquina.

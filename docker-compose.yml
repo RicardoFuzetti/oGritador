@@ -1,0 +1,11 @@
+services:
+  gritador:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      # Sobrescreve o caminho do .env: dentro do container os áudios ficam em /app/Audios
+      AUDIO_FOLDER_PATH: /app/Audios
+    volumes:
+      # Adicionar áudios na pasta sem precisar refazer a imagem
+      - ./Audios:/app/Audios:ro

@@ -53,7 +53,21 @@ O bot sorteia um arquivo `.mp3` ou `.wav` da pasta definida em `AUDIO_FOLDER_PAT
 
 No [Discord Developer Portal](https://discord.com/developers/applications), ative o intent **Message Content** do bot. Sem ele, os comandos com `!` não funcionam.
 
-### Rodando 24/7 com systemd
+### Rodando com Docker
+
+Com o `.env` criado (o `AUDIO_FOLDER_PATH` dele é ignorado no container):
+
+```bash
+docker compose up -d --build
+```
+
+O container reinicia sozinho se cair ou se a máquina reiniciar. Os áudios da pasta `Audios/` são montados no container, então dá para adicionar novos sem refazer a imagem. Logs:
+
+```bash
+docker compose logs -f
+```
+
+### Rodando 24/7 com systemd (sem Docker)
 
 Crie `/etc/systemd/system/gritador.service`:
 

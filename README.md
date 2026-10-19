@@ -26,17 +26,10 @@ Bot para Discord em Python, feito com `discord.py`. Ele entra automaticamente em
     pip install -r requirements.txt
     ```
 
-3. **Arquivo `.env`** na raiz do projeto:
+3. **Arquivo `.env`**: copie o modelo e preencha (veja [Configurando o `.env`](#configurando-o-env)):
 
-    ```plaintext
-    DISCORD_TOKEN=seu_token_aqui
-    GUILD_ID=id_do_servidor
-    VOICE_CHANNEL_ID=id_do_canal_de_voz
-    AUDIO_FOLDER_PATH=Audios
-
-    # Opcional: intervalo entre gritos, em minutos (padrão 40 a 60)
-    MIN_MINUTES=40
-    MAX_MINUTES=60
+    ```bash
+    cp .env.example .env
     ```
 
 4. **Execução** (a partir da pasta do projeto, para o caminho `Audios` funcionar):
@@ -45,13 +38,44 @@ Bot para Discord em Python, feito com `discord.py`. Ele entra automaticamente em
     python main.py
     ```
 
+### Configurando o `.env`
+
+| Variável | Obrigatória | O que é |
+|----------|-------------|---------|
+| `DISCORD_TOKEN` | Sim | Token do bot |
+| `GUILD_ID` | Sim | ID do servidor onde o bot vai gritar |
+| `VOICE_CHANNEL_ID` | Sim | ID do canal de voz |
+| `AUDIO_FOLDER_PATH` | Sim | Pasta com os áudios (`Audios`). No Docker é ignorada |
+| `MIN_MINUTES` | Não | Intervalo mínimo entre gritos, em minutos (padrão `40`) |
+| `MAX_MINUTES` | Não | Intervalo máximo entre gritos, em minutos (padrão `60`) |
+
+**Token do bot**
+
+1. Acesse o [Discord Developer Portal](https://discord.com/developers/applications) e abra sua aplicação (ou crie uma em **New Application**).
+2. Na aba **Bot**, clique em **Reset Token** e copie o valor para `DISCORD_TOKEN`. O Discord só mostra o token uma vez.
+3. Na mesma aba, ative **Message Content Intent**.
+4. Para convidar o bot: aba **OAuth2 > URL Generator**, marque o escopo `bot` e as permissões **Connect** e **Speak**, e abra a URL gerada.
+
+**IDs do servidor e do canal**
+
+1. No Discord, ative o modo desenvolvedor: **Configurações de usuário > Avançado > Modo desenvolvedor**.
+2. Clique com o botão direito no ícone do servidor > **Copiar ID do servidor** e cole em `GUILD_ID`.
+3. Clique com o botão direito no canal de voz > **Copiar ID do canal** e cole em `VOICE_CHANNEL_ID`.
+
+Exemplo preenchido (valores fictícios):
+
+```plaintext
+DISCORD_TOKEN=MTIzNDU2Nzg5MDEyMzQ1Njc4.GabcDe.exemplo_de_token_nao_use
+GUILD_ID=123456789012345678
+VOICE_CHANNEL_ID=234567890123456789
+AUDIO_FOLDER_PATH=Audios
+```
+
+> **Atenção:** o token dá controle total do bot. Não commite o `.env` (ele já está no `.gitignore`) e não compartilhe o token. Se ele vazar, gere outro em **Reset Token**.
+
 ### Áudios
 
 O bot sorteia um arquivo `.mp3` ou `.wav` da pasta definida em `AUDIO_FOLDER_PATH`. Para adicionar mais gritos, basta colocar mais arquivos na pasta `Audios/`.
-
-### Bot no Discord
-
-No [Discord Developer Portal](https://discord.com/developers/applications), ative o intent **Message Content** do bot. Sem ele, os comandos com `!` não funcionam.
 
 ### Rodando com Docker
 

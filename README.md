@@ -1,15 +1,16 @@
 ## oGritador
 
-Bot para Discord em Python, feito com `discord.py`. Ele entra automaticamente em um canal de voz e, de tempos em tempos, toca um áudio aleatório da pasta configurada.
+Bot para Discord em Python, feito com `discord.py`. De tempos em tempos, ele entra sozinho no canal de voz com mais gente e toca um áudio aleatório da pasta configurada.
 
 ### Funcionalidades
 
-- **Conexão automática**: entra no canal de voz configurado assim que o bot inicia.
-- **Grito imediato**: toca um áudio aleatório logo após conectar.
+- **Vai atrás do pessoal**: a cada grito, entra (ou se move) no canal de voz com mais pessoas, sem contar bots. Ignora o canal AFK e canais onde não pode falar.
+- **Grito imediato**: grita assim que o bot inicia, se houver alguém em algum canal.
 - **Grito aleatório**: toca um áudio aleatório a cada 40 a 60 minutos (configurável).
-- **Não grita sozinho**: se não houver ninguém no canal, pula a vez.
+- **Não grita sozinho**: se todos os canais estiverem vazios, pula a vez.
 - **Reconexão**: se cair do canal de voz, volta sozinho no próximo grito.
 - **Comandos** (exigem a permissão "Mover membros"):
+  - `!entrar` — entra no canal de voz de quem chamou e fica nele até o canal esvaziar. Depois volta a escolher o canal com mais gente.
   - `!gritar` — toca um áudio agora.
   - `!pausar` — para os gritos e sai do canal.
   - `!voltar` — retoma os gritos.
@@ -44,7 +45,6 @@ Bot para Discord em Python, feito com `discord.py`. Ele entra automaticamente em
 |----------|-------------|---------|
 | `DISCORD_TOKEN` | Sim | Token do bot |
 | `GUILD_ID` | Sim | ID do servidor onde o bot vai gritar |
-| `VOICE_CHANNEL_ID` | Sim | ID do canal de voz |
 | `AUDIO_FOLDER_PATH` | Sim | Pasta com os áudios (`Audios`). No Docker é ignorada |
 | `MIN_MINUTES` | Não | Intervalo mínimo entre gritos, em minutos (padrão `40`) |
 | `MAX_MINUTES` | Não | Intervalo máximo entre gritos, em minutos (padrão `60`) |
@@ -56,18 +56,16 @@ Bot para Discord em Python, feito com `discord.py`. Ele entra automaticamente em
 3. Na mesma aba, ative **Message Content Intent**.
 4. Para convidar o bot: aba **OAuth2 > URL Generator**, marque o escopo `bot` e as permissões **Connect** e **Speak**, e abra a URL gerada.
 
-**IDs do servidor e do canal**
+**ID do servidor**
 
 1. No Discord, ative o modo desenvolvedor: **Configurações de usuário > Avançado > Modo desenvolvedor**.
 2. Clique com o botão direito no ícone do servidor > **Copiar ID do servidor** e cole em `GUILD_ID`.
-3. Clique com o botão direito no canal de voz > **Copiar ID do canal** e cole em `VOICE_CHANNEL_ID`.
 
 Exemplo preenchido (valores fictícios):
 
 ```plaintext
 DISCORD_TOKEN=MTIzNDU2Nzg5MDEyMzQ1Njc4.GabcDe.exemplo_de_token_nao_use
 GUILD_ID=123456789012345678
-VOICE_CHANNEL_ID=234567890123456789
 AUDIO_FOLDER_PATH=Audios
 ```
 

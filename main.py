@@ -11,13 +11,15 @@ load_dotenv()
 
 # os.environ[...] falha com KeyError mostrando o nome da variável que falta
 GUILD_ID = int(os.environ["GUILD_ID"])
-VOICE_CHANNEL_ID = int(os.environ["VOICE_CHANNEL_ID"])
 AUDIO_FOLDER_PATH = os.environ["AUDIO_FOLDER_PATH"]
 DISCORD_TOKEN = os.environ["DISCORD_TOKEN"]
 MIN_MINUTES = int(os.getenv("MIN_MINUTES", 40))
 MAX_MINUTES = int(os.getenv("MAX_MINUTES", 60))
 
 log = logging.getLogger("gritador")
+
+# Canal fixado pelo !entrar; volta a None quando o canal esvazia
+pinned_channel_id = None
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -31,30 +33,55 @@ def get_random_audio_file(folder_path):
     return os.path.join(folder_path, random.choice(audio_files)) if audio_files else None
 
 
-async def ensure_connected():
-    """Retorna o voice client, reconectando ao canal se o bot tiver caído da voz."""
+def count_humans(channel):
+    return sum(not member.bot for member in channel.members)
+
+
+async def join(guild, channel):
+    """Entra no canal, ou se move para ele se já estiver em outro."""
+    voice_client = guild.voice_client
+    if voice_client and voice_client.is_connected():
+        if voice_client.channel != channel:
+            await voice_client.move_to(channel)
+        return voice_client
+    return await channel.connect()
+
+
+def pick_channel(guild):
+    """Canal fixado pelo !entrar enquanto tiver gente; senão, o canal com mais pessoas."""
+    global pinned_channel_id
+
+    pinned = guild.get_channel(pinned_channel_id) if pinned_channel_id else None
+    if pinned and count_humans(pinned) > 0:
+        return pinned
+    pinned_channel_id = None
+
+    channels = [
+        channel
+        for channel in guild.voice_channels
+        if channel != guild.afk_channel
+        and channel.permissions_for(guild.me).connect
+        and channel.permissions_for(guild.me).speak
+    ]
+    target = max(channels, key=count_humans, default=None)
+    if target is None or count_humans(target) == 0:
+        return None
+    return target
+
+
+async def scream():
     guild = bot.get_guild(GUILD_ID)
     if guild is None:
         raise RuntimeError(f"Guilda com ID {GUILD_ID} não encontrada.")
 
-    if guild.voice_client and guild.voice_client.is_connected():
-        return guild.voice_client
+    # Não troca de canal no meio de um grito
+    if guild.voice_client and guild.voice_client.is_playing():
+        return
 
-    channel = guild.get_channel(VOICE_CHANNEL_ID)
+    channel = pick_channel(guild)
     if channel is None:
-        raise RuntimeError(f"Canal de voz com ID {VOICE_CHANNEL_ID} não encontrado.")
-    return await channel.connect()
-
-
-async def scream():
-    voice_client = await ensure_connected()
-
-    if voice_client.is_playing():
         return
-
-    # Não grita para canal vazio
-    if not any(not member.bot for member in voice_client.channel.members):
-        return
+    voice_client = await join(guild, channel)
 
     audio_file = get_random_audio_file(AUDIO_FOLDER_PATH)
     if audio_file is None:
@@ -99,9 +126,27 @@ async def gritar(ctx):
     await scream()
 
 
+@bot.command(name="entrar")
+@commands.has_permissions(move_members=True)
+async def entrar(ctx):
+    global pinned_channel_id
+
+    if ctx.author.voice is None or ctx.author.voice.channel is None:
+        await ctx.send("Entre em um canal de voz primeiro.")
+        return
+
+    channel = ctx.author.voice.channel
+    pinned_channel_id = channel.id
+    await join(ctx.guild, channel)
+    await ctx.send(f"Entrei em {channel.mention}. Fico aqui até o canal esvaziar.")
+
+
 @bot.command(name="pausar")
 @commands.has_permissions(move_members=True)
 async def pausar(ctx):
+    global pinned_channel_id
+
+    pinned_channel_id = None
     play_audio.cancel()
     if ctx.voice_client:
         await ctx.voice_client.disconnect()

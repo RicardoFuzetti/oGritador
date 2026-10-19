@@ -1,42 +1,80 @@
 ## oGritador
 
-Este projeto é um bot para Discord desenvolvido em Python, utilizando a biblioteca `discord.py`. O bot se conecta automaticamente a um canal de voz específico, onde reproduz arquivos de áudio de forma aleatória em intervalos definidos. Assim que se conecta ao canal, o bot toca um arquivo de áudio específico e, em seguida, continua tocando arquivos aleatórios a cada 1 a 10 segundos.
+Bot para Discord em Python, feito com `discord.py`. Ele entra automaticamente em um canal de voz e, de tempos em tempos, toca um áudio aleatório da pasta configurada.
 
 ### Funcionalidades
 
-- **Conexão Automática**: O bot se conecta automaticamente ao canal de voz especificado ao ser iniciado.
-- **Reprodução Imediata**: Toca um arquivo de áudio específico imediatamente após se conectar ao canal de voz.
-- **Reprodução Aleatória**: Reproduz arquivos de áudio aleatórios a cada 40 a 60 minutos enquanto está conectado ao canal de voz.
-- **Comando de Saída**: Permite que o bot se desconecte do canal de voz com o comando `!leave`.
+- **Conexão automática**: entra no canal de voz configurado assim que o bot inicia.
+- **Grito imediato**: toca um áudio aleatório logo após conectar.
+- **Grito aleatório**: toca um áudio aleatório a cada 40 a 60 minutos (configurável).
+- **Não grita sozinho**: se não houver ninguém no canal, pula a vez.
+- **Reconexão**: se cair do canal de voz, volta sozinho no próximo grito.
+- **Comandos** (exigem a permissão "Mover membros"):
+  - `!gritar` — toca um áudio agora.
+  - `!pausar` — para os gritos e sai do canal.
+  - `!voltar` — retoma os gritos.
 
 ### Configuração
 
-1. **Instalação**: Clone o repositório e instale as dependências usando:
+1. **Requisitos**: Python 3.8+ e [FFmpeg](https://ffmpeg.org/) instalado (`sudo apt install ffmpeg`).
+
+2. **Instalação**:
 
     ```bash
+    python3 -m venv .venv
+    source .venv/bin/activate
     pip install -r requirements.txt
     ```
 
-2. **Arquivo `.env`**: Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
+3. **Arquivo `.env`** na raiz do projeto:
 
     ```plaintext
-    DISCORD_TOKEN=your_discord_token_here
-    GUILD_ID=your_server_id
-    VOICE_CHANNEL_ID=your_voice_channel_id
-    AUDIO_FOLDER_PATH=your_audio_folder_path
+    DISCORD_TOKEN=seu_token_aqui
+    GUILD_ID=id_do_servidor
+    VOICE_CHANNEL_ID=id_do_canal_de_voz
+    AUDIO_FOLDER_PATH=Audios
+
+    # Opcional: intervalo entre gritos, em minutos (padrão 40 a 60)
+    MIN_MINUTES=40
+    MAX_MINUTES=60
     ```
 
-3. **Execução**: Execute o bot com:
+4. **Execução** (a partir da pasta do projeto, para o caminho `Audios` funcionar):
 
     ```bash
     python main.py
     ```
 
-### Dependências
+### Áudios
 
-- `discord.py`
-- `python-dotenv`
+O bot sorteia um arquivo `.mp3` ou `.wav` da pasta definida em `AUDIO_FOLDER_PATH`. Para adicionar mais gritos, basta colocar mais arquivos na pasta `Audios/`.
 
-### Observações
+### Bot no Discord
 
-Necessário ter o FFmpeg instalado na máquina.
+No [Discord Developer Portal](https://discord.com/developers/applications), ative o intent **Message Content** do bot. Sem ele, os comandos com `!` não funcionam.
+
+### Rodando 24/7 com systemd
+
+Crie `/etc/systemd/system/gritador.service`:
+
+```ini
+[Unit]
+Description=oGritador
+After=network-online.target
+
+[Service]
+WorkingDirectory=/home/ubuntu/oGritador
+ExecStart=/home/ubuntu/oGritador/.venv/bin/python main.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+
+E ative:
+
+```bash
+sudo systemctl enable --now gritador
+```
+
+Ajuste os caminhos para o usuário e a pasta da sua máquina.
